@@ -21,19 +21,29 @@ class User extends Model implements AuthenticatableContract,
      *
      * @var string
      */
-    protected $table = 'users';
+    protected $table = 'wp_users';
+    public $timestamps = false;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['name', 'email', 'password'];
+    protected $fillable = ['user_login', 
+                           'user_pass', 
+                           'user_nicename', 
+                           'user_email',
+                           'user_url', 
+                           'user_registered', 
+                           'user_activation_key', 
+                           'user_status', 
+                           'display_name'];
 
     /**
      * The attributes excluded from the model's JSON form.
      *
      * @var array
      */
-    protected $hidden = ['password', 'remember_token'];
+    protected $hidden = [];
+
 }

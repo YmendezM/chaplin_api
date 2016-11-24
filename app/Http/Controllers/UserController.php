@@ -17,7 +17,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        return User::all();
     }
 
     /**
@@ -38,8 +38,35 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        User::create($request->all());
-        return ['created' => true];
+        $rules = [
+            'user_login'      => 'required',
+            'user_pass'     => 'required',
+            'user_email'  => 'required|email'
+            ];
+
+            try {
+                $validator = \Validator::make($request->all(), $rules);
+                if ($validator->fails()) {
+                    return [
+                        'Datos Vacios',
+                        'errors'  => $validator->errors()->all()
+                    ];
+                }
+ 
+                    User::create([
+                                    'user_login' => $request['user_login'],
+                                    'user_pass' => bcrypt($request['user_pass']),
+                                    'user_nicename' => $request['user_login'],
+                                    'user_email' => $request['user_email'],
+                                    'user_registered' => date_default_timezone_get(),
+                                    'display_name' => $request['user_login'],
+                                ]);
+                    return ['Usuario Registrado'];
+
+            } catch (Exception $e) {
+                    \Log::info('Error creating user: '.$e);
+                    return \Response::json(['created' => false], 500);
+            }
     }
 
     /**
@@ -50,8 +77,10 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        return User::find($id);
+        return User::findOrFail($id);
     }
+
+
 
     /**
      * Show the form for editing the specified resource.
